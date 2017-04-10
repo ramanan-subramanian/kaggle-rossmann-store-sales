@@ -29,8 +29,7 @@ def process_data(data):
 
     data.CompetitionDistance = np.log1p(data.CompetitionDistance)
 
-    data["CompetitionSince"] = \
-        12 * (data.Year - data.CompetitionOpenSinceYear) + \
+    data["CompetitionSince"] = 12 * (data.Year - data.CompetitionOpenSinceYear) + \
         (data.Month - data.CompetitionOpenSinceMonth)
     data = data.drop(["CompetitionOpenSinceMonth",
                       "CompetitionOpenSinceYear"], axis=1)
@@ -42,8 +41,7 @@ def process_data(data):
     data = data.drop(["Year", "Promo2SinceWeek", "Promo2SinceYear"], axis=1)
 
     month_string = {1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr", 5: "May", 6: "Jun",
-                    7: "Jul", 8: "Aug", 9: "Sept", 10: "Oct", 11: "Nov",
-                    12: "Dec"}
+                    7: "Jul", 8: "Aug", 9: "Sept", 10: "Oct", 11: "Nov", 12: "Dec"}
     data["MonthString"] = data.Month.map(month_string)
     data.loc[data.PromoInterval == 0, "PromoInterval"] = ""
     data["IsPromoMonth"] = 0
@@ -72,7 +70,7 @@ def process_average_sales(data, average_sales):
 
 
 def rmspe(y, yhat):
-    return np.sqrt(np.mean(((y - yhat)/y) ** 2))
+    return np.sqrt(np.mean(((y - yhat) / y) ** 2))
 
 
 def rmspe_xg(yhat, y):
@@ -81,9 +79,8 @@ def rmspe_xg(yhat, y):
     return "rmspe", rmspe(y, yhat)
 
 
-dtype = {"Store": "int", "DayOfWeek": "int", "Date": "str", "Customers": "int",
-         "Open": "int", "Promo": "int", "StateHoliday": "str",
-         "SchoolHoliday": "int", "Sales": "int"}
+dtype = {"Store": "int", "DayOfWeek": "int", "Date": "str", "Customers": "int", "Open": "int",
+         "Promo": "int", "StateHoliday": "str", "SchoolHoliday": "int", "Sales": "int"}
 
 print("Load and process datasets.")
 store = pandas.read_csv("data/store.csv")
@@ -109,7 +106,7 @@ average_sales = []
 train = process_average_sales(train, average_sales)
 test["AverageSales"] = 0
 for i in range(1, 1116):
-    test.loc[test.Store == i, "AverageSales"] = average_sales[i-1]
+    test.loc[test.Store == i, "AverageSales"] = average_sales[i - 1]
 
 print("Split the datasets into training set and validation set.")
 X_train, X_valid = train_test_split(train, test_size=0.012, random_state=10)
@@ -139,8 +136,7 @@ params = {"objective": "reg:linear",
           "seed": 1301}
 num_boost_round = 18066
 model = xgboost.train(params, dtrain, num_boost_round, evals=watchlist,
-                      early_stopping_rounds=50, feval=rmspe_xg,
-                      verbose_eval=True)
+                      early_stopping_rounds=50, feval=rmspe_xg, verbose_eval=True)
 pickle.dump(model, open("model.dat", "wb"))
 
 print("Validating the model.")
