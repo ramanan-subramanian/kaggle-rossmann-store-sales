@@ -5,3 +5,10 @@
 ## Score
 - Private Score : 0.11276
 - Public Score  : 0.10334
+
+## Python Dependencies
+- Matplotlib
+- NumPy
+- pandas
+- Scikit-Learn
+- XGBoost
